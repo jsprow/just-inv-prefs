@@ -1,7 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Banner from  './components/Banner'
-import Selectors from  './components/Selectors'
+import Layout from  './components/Layout'
 
-ReactDOM.render( <Banner />, document.getElementById('banner') )
-ReactDOM.render( <Selectors />, document.getElementById('selectors') )
+ReactDOM.render( <Layout />, document.getElementById('root') )
