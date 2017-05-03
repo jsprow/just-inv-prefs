@@ -1,3 +1,74 @@
+@font-face {
+    font-family: Roboto;
+    src: url("fonts/Roboto-Regular.ttf");
+    font-weight: 400
+}
+
 body {
+    font-family: "Roboto", "Arial", sans-serif;
     padding: 0;
+}
+.container {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+
+}
+.select-style {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-around;
+}
+.select-box {
+    position: relative;
+    width: 160px;
+    margin: 12px;
+    transition: all 500ms;
+}
+.select-box::after {
+    font-size: 12px;
+    color: #444;
+    position: absolute;
+    top: 12px;
+    right: 6px;
+    content: '\25bc';
+    background-color: transparent;
+    transition: all 500ms;
+    pointer-events: none;
+}
+.select-box.disabled {
+    background: hsla(200, 50%, 50%, 0.1);
+    border: 2px solid hsla(200, 50%, 50%, 0.2);
+    transition: all 500ms;
+}
+.select-box.disabled::after {
+    color: #999;
+    transition: all 500ms;
+}
+.select-box.enabled {
+    border: 2px solid #ccc;
+    background: transparent;
+    transition: all 500ms;
+}
+.select-style select {
+    position: relative;
+    padding: 5px 8px;
+    height: 36px;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+}
+input.submit-button {
+    width: 100px;
+    height: 36px;
+    margin: 12px;
+    border: 1px solid #ddd;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
 }

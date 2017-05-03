@@ -1,13 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import carListBig from '../data/carList.json'
-import _ from 'lodash'
 
 const carList = carListBig.makes
 
 var makes = [],
     models = [],
-    years = []
+    years = [],
+    modelsList,
+    yearsList,
+    modelsDisabled = 'disabled',
+    yearsDisabled = 'disabled'
 
 function Prefs(make, model, years) {
     this.make = []
@@ -17,7 +20,7 @@ function Prefs(make, model, years) {
 
 var pref = new Prefs()
 function Makes() {
-    makes = []
+    makes = ['']
     for (var i = 0; i < carList.length; i++) {
         var make = carList[i].name
 
@@ -29,11 +32,14 @@ function Makes() {
         return <option key={'make' + index}>{make}</option>
     })
     return (
-        <select id="makesList" onChange={getModels}>{makesList}</select>
+        <div className="select-box enabled">
+            <select id="makesList" onChange={getModels}>{makesList}</select>
+        </div>
     )
 }
 function getModels() {
     models = []
+    modelsDisabled = 'enabled'
     pref = new Prefs()
 
     const makeSelected = document.getElementById('makesList').value
@@ -53,21 +59,23 @@ function getModels() {
             }
         }
     }
-    const modelsList = models.map((model, index) => {
+    modelsList = models.map((model, index) => {
         return <option key={'model' + index}>{model}</option>
     })
-    ReactDOM.render(
-        <select id="yearsList" onChange={handlePrefs}></select>,
-        document.getElementById('yearsBox')
-    )
-    ReactDOM.render(
-        <select id="modelsList" onChange={getYears}>{modelsList}</select>,
-        document.getElementById('modelsBox')
-    )
+}
+class Models extends React.Component {
+    render() {
+        return (
+            <div className={"select-box " + this.props.disabled}>
+                <select id="modelsList" onChange={getYears}>{this.props.models}</select>
+            </div>
+        )
+    }
 }
 function getYears() {
     const modelSelected = document.getElementById('modelsList').value
     years = []
+    yearsDisabled = 'enabled'
     pref.model = []
     pref.model.push(modelSelected)
 
@@ -85,13 +93,18 @@ function getYears() {
             }
         }
     }
-    const yearsList = years.map((year, index) => {
+    yearsList = years.map((year, index) => {
         return <option key={'year' + index}>{year}</option>
     })
-    ReactDOM.render(
-        <select id="yearsList" onChange={handlePrefs}>{yearsList}</select>,
-        document.getElementById('yearsBox')
-    )
+}
+class Years extends React.Component {
+    render() {
+        return (
+            <div className={"select-box " + this.props.disabled}>
+                <select id="yearsList" onChange={handlePrefs}>{this.props.years}</select>
+            </div>
+        )
+    }
 }
 function handlePrefs() {
     const yearSelected = document.getElementById('yearsList').value
@@ -113,16 +126,53 @@ function submitPrefs(event) {
     console.log(pref.make, pref.model, pref.year)
 
     event.preventDefault()
+    ReactDOM.render(
+        <tr>
+            <td>{pref.make[0]}</td>
+            <td>{pref.model[0]}</td>
+            <td>{pref.year[0]}</td>
+        </tr>,
+        document.getElementById('prefs-body')
+    )
 }
-class Selectors extends React.Component {
+class PrefsTable extends React.Component {
     render() {
         return (
-            <form id="selectorBox">
-                <div id="makesBox"><Makes /></div>
-                <div id="modelsBox"></div>
-                <div id="yearsBox"></div>
-                <input type="submit" onClick={submitPrefs} value="Submit" />
-            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Make</th>
+                        <th>Model</th>
+                        <th>Year</th>
+                    </tr>
+                </thead>
+                <tbody id="prefs-body">
+                </tbody>
+            </table>
+        )
+    }
+}
+class Selectors extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = { models: modelsList, years: yearsList, modelsDisabled: modelsDisabled, yearsDisabled: yearsDisabled }
+    }
+    change() {
+        this.setState({ models: modelsList, years: yearsList, modelsDisabled: modelsDisabled, yearsDisabled: yearsDisabled })
+    }
+    render() {
+        return (
+            <div className="container">
+                <form id="selectorBox" onChange={() => this.change()} >
+                    <div className="select-style">
+                        <Makes />
+                        <Models disabled={this.state.modelsDisabled} models={this.state.models} />
+                        <Years disabled={this.state.yearsDisabled} years={this.state.years} />
+                        <input className="submit-button" type="submit" onClick={submitPrefs} value="Submit" />
+                    </div >
+                </form >
+                <PrefsTable />
+            </div >
         )
     }
 }
