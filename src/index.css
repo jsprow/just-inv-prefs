@@ -6,6 +6,7 @@
 
 body {
     font-family: "Roboto", "Arial", sans-serif;
+    font-size: 16px;
     padding: 0;
 }
 .container {
@@ -13,17 +14,20 @@ body {
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
-
 }
 .select-style {
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-around;
+    align-items: center;
 }
 .select-box {
+    color: transparent;
     position: relative;
     width: 160px;
     margin: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     transition: all 500ms;
 }
 .select-box::after {
@@ -33,42 +37,78 @@ body {
     top: 12px;
     right: 6px;
     content: '\25bc';
-    background-color: transparent;
+    background: transparent;
     transition: all 500ms;
     pointer-events: none;
 }
 .select-box.disabled {
-    background: hsla(200, 50%, 50%, 0.1);
-    border: 2px solid hsla(200, 50%, 50%, 0.2);
+    background: hsla(0, 0%, 0%, 0.1);
+    border: 1px solid hsla(0, 0%, 0%, 0.1);
     transition: all 500ms;
 }
 .select-box.disabled::after {
     color: #999;
     transition: all 500ms;
 }
-.select-box.enabled {
-    border: 2px solid #ccc;
-    background: transparent;
+.select-box:hover,
+.submit-button:hover {
+    border: 1px solid #aaa;
+    box-shadow: 0 2px 8px #aaa;
+    transform: translateY(1px);
     transition: all 500ms;
 }
-.select-style select {
+.select-box select {
+    font-size: 1em;
     position: relative;
-    padding: 5px 8px;
+    padding: 5px 12px;
     height: 36px;
     width: 100%;
     border: none;
+    outline: none;
     box-shadow: none;
     background: transparent;
     background-image: none;
     -webkit-appearance: none;
+    transition: color 500ms;
+    padding-right: 22px;
 }
-input.submit-button {
+.select-box.disabled select {
+    color: transparent;
+    transition: color 500ms;
+}
+.submit-button {
+    font-size: 1em;
     width: 100px;
     height: 36px;
     margin: 12px;
     border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
     box-shadow: none;
     background: transparent;
     background-image: none;
     -webkit-appearance: none;
+    transition: all 500ms;
+}
+.submit-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px #aaa;
+}
+.container.not-visible {
+    opacity: 0;
+    transition: opacity 500ms;
+}
+.container.is-visible {
+    opacity: 1;
+    transition: opacity 500ms;
+}
+.prefs-table {
+    width: 500px;
+}
+.prefs-table tr {
+    width: 100%;
+}
+.prefs-table th,
+.prefs-table td {
+    text-align: left;
 }

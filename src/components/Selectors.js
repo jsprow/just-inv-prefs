@@ -7,10 +7,12 @@ const carList = carListBig.makes
 var makes = [],
     models = [],
     years = [],
+    prefs = [],
     modelsList,
     yearsList,
     modelsDisabled = 'disabled',
-    yearsDisabled = 'disabled'
+    yearsDisabled = 'disabled',
+    tableVisible = 'not-visible'
 
 function Prefs(make, model, years) {
     this.make = []
@@ -19,8 +21,9 @@ function Prefs(make, model, years) {
 }
 
 var pref = new Prefs()
+
 function Makes() {
-    makes = ['']
+    makes = ['Select Make']
     for (var i = 0; i < carList.length; i++) {
         var make = carList[i].name
 
@@ -32,13 +35,13 @@ function Makes() {
         return <option key={'make' + index}>{make}</option>
     })
     return (
-        <div className="select-box enabled">
+        <div className="select-box">
             <select id="makesList" onChange={getModels}>{makesList}</select>
         </div>
     )
 }
 function getModels() {
-    models = []
+    models = ['Select Model']
     modelsDisabled = 'enabled'
     pref = new Prefs()
 
@@ -74,7 +77,7 @@ class Models extends React.Component {
 }
 function getYears() {
     const modelSelected = document.getElementById('modelsList').value
-    years = []
+    years = ['Select Year']
     yearsDisabled = 'enabled'
     pref.model = []
     pref.model.push(modelSelected)
@@ -138,8 +141,10 @@ function submitPrefs(event) {
 class PrefsTable extends React.Component {
     render() {
         return (
-            <table>
-                <thead>
+            <div className={"container " + this.props.visible}>
+                <h1>Your Picks:</h1>
+            <table className="prefs-table">
+                <thead className="prefs-head">
                     <tr>
                         <th>Make</th>
                         <th>Model</th>
@@ -149,16 +154,29 @@ class PrefsTable extends React.Component {
                 <tbody id="prefs-body">
                 </tbody>
             </table>
+            </div>
         )
     }
 }
 class Selectors extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { models: modelsList, years: yearsList, modelsDisabled: modelsDisabled, yearsDisabled: yearsDisabled }
+        this.state = { 
+            models: modelsList, 
+            years: yearsList, 
+            modelsDisabled: modelsDisabled, 
+            yearsDisabled: yearsDisabled, 
+            tableVisible: tableVisible 
+        }
+        this.submit = this.submit.bind(this)
     }
     change() {
         this.setState({ models: modelsList, years: yearsList, modelsDisabled: modelsDisabled, yearsDisabled: yearsDisabled })
+    }
+    submit() {
+        submitPrefs(event)
+        tableVisible = 'is-visible'
+        this.setState({ tableVisible: tableVisible })
     }
     render() {
         return (
@@ -168,10 +186,10 @@ class Selectors extends React.Component {
                         <Makes />
                         <Models disabled={this.state.modelsDisabled} models={this.state.models} />
                         <Years disabled={this.state.yearsDisabled} years={this.state.years} />
-                        <input className="submit-button" type="submit" onClick={submitPrefs} value="Submit" />
+                        <button type="button" className="submit-button" onClick={ this.submit } >Pick</button>
                     </div >
                 </form >
-                <PrefsTable />
+                <PrefsTable visible={this.state.tableVisible} />
             </div >
         )
     }
