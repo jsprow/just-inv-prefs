@@ -1,26 +1,28 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import carListBig from '../data/carList.json'
+import io from 'socket.io-client'
+
+var socket = io('http://localhost:3030')
+socket.on('ready', function (data) {
+    console.log(data)
+})
+// import seetdrandom from 'seedrandom'
 
 const carList = carListBig.makes
 
 var makes = [],
     models = [],
     years = [],
+    pref,
     prefs = [],
     modelsList,
     yearsList,
+    prefsList,
+    makeSelected,
+    modelSelected,
     modelsDisabled = 'disabled',
     yearsDisabled = 'disabled',
     tableVisible = 'not-visible'
-
-function Prefs(make, model, years) {
-    this.make = []
-    this.model = []
-    this.year = []
-}
-
-var pref = new Prefs()
 
 function Makes() {
     makes = ['Select Make']
@@ -32,7 +34,7 @@ function Makes() {
         }
     }
     const makesList = makes.map((make, index) => {
-        return <option key={'make' + index}>{make}</option>
+        return <option key={'make_' + index}>{make}</option>
     })
     return (
         <div className="select-box">
@@ -43,13 +45,9 @@ function Makes() {
 function getModels() {
     models = ['Select Model']
     modelsDisabled = 'enabled'
-    pref = new Prefs()
+    pref = { 'make': '', 'model': '', 'year': '' }
 
-    const makeSelected = document.getElementById('makesList').value
-
-    pref.make = []
-    pref.make.push(makeSelected)
-    console.log(pref.make)
+    makeSelected = document.getElementById('makesList').value
 
     for (let i = 0; i < carList.length; i++) {
         let make = carList[i].name,
@@ -63,7 +61,7 @@ function getModels() {
         }
     }
     modelsList = models.map((model, index) => {
-        return <option key={'model' + index}>{model}</option>
+        return <option key={'model_' + index}>{model}</option>
     })
 }
 class Models extends React.Component {
@@ -76,17 +74,16 @@ class Models extends React.Component {
     }
 }
 function getYears() {
-    const modelSelected = document.getElementById('modelsList').value
     years = ['Select Year']
     yearsDisabled = 'enabled'
-    pref.model = []
-    pref.model.push(modelSelected)
+
+    modelSelected = document.getElementById('modelsList').value
 
     for (let i = 0; i < carList.length; i++) {
-        if (pref.make[0] === carList[i].name) {
+        if (makeSelected === carList[i].name) {
             var _models = carList[i].models
             for (let i = 0; i < _models.length; i++) {
-                if (pref.model[0] === _models[i].name) {
+                if (modelSelected === _models[i].name) {
                     var _years = _models[i].years
                     for (let i = 0; i < _years.length; i++) {
                         let year = _years[i].year;
@@ -104,56 +101,67 @@ class Years extends React.Component {
     render() {
         return (
             <div className={"select-box " + this.props.disabled}>
-                <select id="yearsList" onChange={handlePrefs}>{this.props.years}</select>
+                <select id="yearsList">{this.props.years}</select>
             </div>
         )
     }
 }
-function handlePrefs() {
-    const yearSelected = document.getElementById('yearsList').value
-
-    pref.year.push(yearSelected)
-    console.log(pref.make, pref.model, pref.year)
+class Pref extends React.Component {
+    render() {
+        return (
+            <tr id={'pref_' + this.props.index}>
+                <td>{this.props.make}</td>
+                <td>{this.props.model}</td>
+                <td>{this.props.year}</td>
+                <td onClick={this.removePref} id={'close_' + this.props.index}>&#10006;</td>
+            </tr>
+        )
+    }
 }
 function submitPrefs(event) {
     if (pref.make.length === 0 && document.getElementById('makesList')) {
-        pref.make.push(document.getElementById('makesList').value)
+        var make = document.getElementById('makesList').value
+        if (make !== 'Select Make') {
+            pref.make = make
+        }
     }
     if (pref.model.length === 0 && document.getElementById('modelsList')) {
-        pref.model.push(document.getElementById('modelsList').value)
+        var model = document.getElementById('modelsList').value
+        if (model !== 'Select Model') {
+            pref.model = model
+        }
     }
     if (pref.year.length === 0 && document.getElementById('yearsList')) {
-        pref.year.push(document.getElementById('yearsList').value)
+        var year = document.getElementById('yearsList').value
+        if (year !== 'Select Year') {
+            pref.year = year
+        }
     }
-
-    console.log(pref.make, pref.model, pref.year)
-
-    event.preventDefault()
-    ReactDOM.render(
-        <tr>
-            <td>{pref.make[0]}</td>
-            <td>{pref.model[0]}</td>
-            <td>{pref.year[0]}</td>
-        </tr>,
-        document.getElementById('prefs-body')
-    )
+    prefs.push(pref)
+    prefsList = prefs.map((pref, index) => {
+        return (
+            <Pref key={'pref_' + index} index={index} make={pref.make} model={pref.model} year={pref.year} />
+        )
+    })
+    pref = { 'make': '', 'model': '', 'year': '' }
 }
 class PrefsTable extends React.Component {
     render() {
         return (
             <div className={"container " + this.props.visible}>
                 <h1>Your Picks:</h1>
-            <table className="prefs-table">
-                <thead className="prefs-head">
-                    <tr>
-                        <th>Make</th>
-                        <th>Model</th>
-                        <th>Year</th>
-                    </tr>
-                </thead>
-                <tbody id="prefs-body">
-                </tbody>
-            </table>
+                <table className="prefs-table">
+                    <thead className="prefs-head">
+                        <tr>
+                            <th>Make</th>
+                            <th>Model</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prefs-body">
+                        {this.props.prefs}
+                    </tbody>
+                </table>
             </div>
         )
     }
@@ -161,22 +169,42 @@ class PrefsTable extends React.Component {
 class Selectors extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { 
-            models: modelsList, 
-            years: yearsList, 
-            modelsDisabled: modelsDisabled, 
-            yearsDisabled: yearsDisabled, 
-            tableVisible: tableVisible 
+        this.state = {
+            models: modelsList,
+            years: yearsList,
+            modelsDisabled: modelsDisabled,
+            yearsDisabled: yearsDisabled,
+            tableVisible: tableVisible,
+            prefs: prefs
         }
         this.submit = this.submit.bind(this)
     }
     change() {
-        this.setState({ models: modelsList, years: yearsList, modelsDisabled: modelsDisabled, yearsDisabled: yearsDisabled })
+        this.setState({
+            models: modelsList,
+            years: yearsList,
+            modelsDisabled: modelsDisabled,
+            yearsDisabled: yearsDisabled
+        })
     }
     submit() {
         submitPrefs(event)
         tableVisible = 'is-visible'
-        this.setState({ tableVisible: tableVisible })
+        this.setState({ tableVisible: tableVisible, prefs: prefsList })
+    }
+    send() {
+        var _prefs = []
+        if (prefsList) {
+            for (var i = 0; i < prefsList.length; i++) {
+                _prefs.push({
+                    "make": prefsList[i].props.make,
+                    "model": prefsList[i].props.model,
+                    "year": prefsList[i].props.year
+                })
+            }
+            socket.emit('send-prefs', { _prefs })
+            console.log(_prefs)
+        }
     }
     render() {
         return (
@@ -186,10 +214,11 @@ class Selectors extends React.Component {
                         <Makes />
                         <Models disabled={this.state.modelsDisabled} models={this.state.models} />
                         <Years disabled={this.state.yearsDisabled} years={this.state.years} />
-                        <button type="button" className="submit-button" onClick={ this.submit } >Pick</button>
+                        <button type="button" className="submit-button" onClick={this.submit} >Pick</button>
                     </div >
                 </form >
-                <PrefsTable visible={this.state.tableVisible} />
+                <PrefsTable prefs={prefsList} visible={this.state.tableVisible} />
+                <button className="submit-button" onClick={this.send}>Send</button>
             </div >
         )
     }

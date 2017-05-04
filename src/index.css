@@ -28,7 +28,7 @@ body {
     margin: 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    transition: all 500ms;
+    transition: all 250ms;
 }
 .select-box::after {
     font-size: 12px;
@@ -38,24 +38,24 @@ body {
     right: 6px;
     content: '\25bc';
     background: transparent;
-    transition: all 500ms;
+    transition: all 250ms;
     pointer-events: none;
 }
 .select-box.disabled {
     background: hsla(0, 0%, 0%, 0.1);
     border: 1px solid hsla(0, 0%, 0%, 0.1);
-    transition: all 500ms;
+    transition: all 250ms;
 }
 .select-box.disabled::after {
     color: #999;
-    transition: all 500ms;
+    transition: all 250ms;
 }
 .select-box:hover,
 .submit-button:hover {
     border: 1px solid #aaa;
     box-shadow: 0 2px 8px #aaa;
     transform: translateY(1px);
-    transition: all 500ms;
+    transition: all 250ms;
 }
 .select-box select {
     font-size: 1em;
@@ -69,12 +69,12 @@ body {
     background: transparent;
     background-image: none;
     -webkit-appearance: none;
-    transition: color 500ms;
+    transition: color 250ms;
     padding-right: 22px;
 }
 .select-box.disabled select {
     color: transparent;
-    transition: color 500ms;
+    transition: color 250ms;
 }
 .submit-button {
     font-size: 1em;
@@ -88,27 +88,46 @@ body {
     background: transparent;
     background-image: none;
     -webkit-appearance: none;
-    transition: all 500ms;
+    transition: all 250ms;
 }
 .submit-button:active {
     transform: translateY(0);
     box-shadow: 0 1px 4px #aaa;
 }
 .container.not-visible {
-    opacity: 0;
-    transition: opacity 500ms;
+    /*opacity: 0;*/
+    transition: all 250ms;
 }
 .container.is-visible {
     opacity: 1;
-    transition: opacity 500ms;
+    transition: all 250ms;
 }
 .prefs-table {
-    width: 500px;
+    min-width: max-content;
+    max-width: 90vw;
+    border-collapse: collapse;
+    position: relative;
+}
+.prefs-table::after {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+
 }
 .prefs-table tr {
+    margin: 12px;
     width: 100%;
 }
 .prefs-table th,
 .prefs-table td {
     text-align: left;
+    padding: 4px 24px 4px 12px;
+}
+#prefs-body tr:nth-of-type(2n-1) {
+    background-color: #eee;
 }
