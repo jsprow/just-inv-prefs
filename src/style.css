@@ -3,7 +3,6 @@
     src: url("fonts/Roboto-Regular.ttf");
     font-weight: 400
 }
-
 body {
     font-family: "Roboto", "Arial", sans-serif;
     font-size: 16px;
@@ -50,10 +49,9 @@ body {
     color: #999;
     transition: all 250ms;
 }
-.select-box:hover,
+.select-box.enabled:hover,
 .submit-button:hover {
-    border: 1px solid #aaa;
-    box-shadow: 0 2px 8px #aaa;
+    box-shadow: 0 2px 8px lightblue;
     transform: translateY(1px);
     transition: all 250ms;
 }
@@ -74,7 +72,7 @@ body {
 }
 .select-box.disabled select {
     color: transparent;
-    transition: color 250ms;
+    transition: color 50ms;
 }
 .submit-button {
     font-size: 1em;
@@ -95,7 +93,7 @@ body {
     box-shadow: 0 1px 4px #aaa;
 }
 .container.not-visible {
-    /*opacity: 0;*/
+    opacity: 0;
     transition: all 250ms;
 }
 .container.is-visible {
@@ -130,4 +128,14 @@ body {
 }
 #prefs-body tr:nth-of-type(2n-1) {
     background-color: #eee;
+}
+.select-box.mobile:hover,
+.select-box.mobile:active,
+.select-box.mobile:focus,
+.submit-button.mobile:hover,
+.submit-button.mobile:active,
+.submit-button.mobile:focus {
+    transform: translateY(0);
+    box-shadow: none;
+    border: 1px solid lightblue;
 }

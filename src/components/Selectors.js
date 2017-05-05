@@ -24,7 +24,8 @@ var makes = [],
     yearsDisabled = 'disabled',
     tableVisible = 'not-visible'
 
-function Makes() {
+class Makes extends React.Component {
+    render() {
     makes = ['Select Make']
     for (var i = 0; i < carList.length; i++) {
         var make = carList[i].name
@@ -37,10 +38,11 @@ function Makes() {
         return <option key={'make_' + index}>{make}</option>
     })
     return (
-        <div className="select-box">
+        <div className={'select-box enabled ' + this.props.mobile}>
             <select id="makesList" onChange={getModels}>{makesList}</select>
         </div>
     )
+    }
 }
 function getModels() {
     models = ['Select Model']
@@ -67,7 +69,7 @@ function getModels() {
 class Models extends React.Component {
     render() {
         return (
-            <div className={"select-box " + this.props.disabled}>
+            <div className={"select-box " + this.props.disabled + " " + this.props.mobile}>
                 <select id="modelsList" onChange={getYears}>{this.props.models}</select>
             </div>
         )
@@ -100,7 +102,7 @@ function getYears() {
 class Years extends React.Component {
     render() {
         return (
-            <div className={"select-box " + this.props.disabled}>
+            <div className={"select-box " + this.props.disabled + " " + this.props.mobile}>
                 <select id="yearsList">{this.props.years}</select>
             </div>
         )
@@ -170,6 +172,7 @@ class Selectors extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            makesValue: 'Select Make',
             models: modelsList,
             years: yearsList,
             modelsDisabled: modelsDisabled,
@@ -190,7 +193,18 @@ class Selectors extends React.Component {
     submit() {
         submitPrefs(event)
         tableVisible = 'is-visible'
-        this.setState({ tableVisible: tableVisible, prefs: prefsList })
+        models = []
+        years = []
+        modelsDisabled = 'disabled'
+        yearsDisabled = 'disabled'
+        this.setState({
+            tableVisible: tableVisible,
+            prefs: prefsList,
+            models: modelsList,
+            years: yearsList,
+            modelsDisabled: modelsDisabled,
+            yearsDisabled: yearsDisabled
+        })
     }
     send() {
         var _prefs = []
@@ -211,14 +225,16 @@ class Selectors extends React.Component {
             <div className="container">
                 <form id="selectorBox" onChange={() => this.change()} >
                     <div className="select-style">
-                        <Makes />
-                        <Models disabled={this.state.modelsDisabled} models={this.state.models} />
-                        <Years disabled={this.state.yearsDisabled} years={this.state.years} />
-                        <button type="button" className="submit-button" onClick={this.submit} >Pick</button>
+                        <Makes mobile={this.props.mobile} value={this.state.makesValue} />
+                        <Models mobile={this.props.mobile} disabled={this.state.modelsDisabled} models={this.state.models} />
+                        <Years mobile={this.props.mobile} disabled={this.state.yearsDisabled} years={this.state.years} />
+                        <button type="button" className={'submit-button ' + this.props.mobile} onClick={this.submit} >Pick</button>
                     </div >
                 </form >
                 <PrefsTable prefs={prefsList} visible={this.state.tableVisible} />
-                <button className="submit-button" onClick={this.send}>Send</button>
+                <div className={'container ' + this.state.tableVisible}>
+                    <button className={'submit-button ' + this.props.mobile} onClick={this.send}>Send</button>
+                </div>
             </div >
         )
     }
