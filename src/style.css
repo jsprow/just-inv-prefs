@@ -118,6 +118,16 @@ h1 {
     transform: translateY(0);
     box-shadow: 0 1px 4px #aaa;
 }
+.submit-button.sent,
+.submit-button.sent:hover,
+.submit-button.sent:active {
+    color: #fff;
+    background-color: darkgreen;
+    border: 1px solid transparent;
+    pointer-events: none;
+    transform: translateY(0);
+    box-shadow: none;
+}
 .container.not-visible {
     opacity: 0;
     transition: all 250ms;

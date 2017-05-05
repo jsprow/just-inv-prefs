@@ -19,7 +19,9 @@ var makes = [],
     yearsDisabled = 'disabled',
     tableVisible = 'not-visible',
     mobileNumber = '',
-    mobileChecked = false
+    mobileChecked = false,
+    isSent = 'Send',
+    isSentClass = ''
 
 class MobileInput extends React.Component {
     constructor(props) {
@@ -201,9 +203,12 @@ class Selectors extends React.Component {
             modelsDisabled: modelsDisabled,
             yearsDisabled: yearsDisabled,
             tableVisible: tableVisible,
-            prefs: prefs
+            prefs: prefs,
+            isSent: isSent,
+            isSentClass: isSentClass
         }
         this.submit = this.submit.bind(this)
+        this.send = this.send.bind(this)
     }
     change() {
         this.setState({
@@ -227,7 +232,11 @@ class Selectors extends React.Component {
             years = []
             modelsDisabled = 'disabled'
             yearsDisabled = 'disabled'
+            isSent = 'Send'
+            isSentClass = ''
             thing.setState({
+                isSent: isSent,
+                isSentClass: isSentClass,
                 tableVisible: tableVisible,
                 prefs: prefsList,
                 models: modelsList,
@@ -250,6 +259,12 @@ class Selectors extends React.Component {
             _mobile = mobileNumber.replace(/[^0-9.]/g, '')
         var _prefs = []
         if (_mobile.length === 10) {
+            isSent = 'Sent'
+            isSentClass = 'sent'
+            this.setState({
+                isSent: isSent,
+                isSentClass: isSentClass
+            })
             if (prefsList) {
                 for (var i = 0; i < prefsList.length; i++) {
                     _prefs.push({
@@ -280,7 +295,7 @@ class Selectors extends React.Component {
                 </form >
                 <PrefsTable prefs={prefsList} visible={this.state.tableVisible} />
                 <div className={'container ' + this.state.tableVisible}>
-                    <button className={'submit-button ' + this.props.mobile} onClick={this.send}>Send</button>
+                    <button className={'submit-button ' + this.props.mobile + ' ' + this.state.isSentClass} onClick={this.send}>{this.state.isSent.toString()}</button>
                 </div>
             </div >
         )
