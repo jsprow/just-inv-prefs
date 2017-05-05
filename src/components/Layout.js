@@ -1,5 +1,4 @@
 import React from 'react'
-import Banner from './Banner'
 import Selectors from './Selectors'
 
 const testExp = new RegExp('Android|webOS|iPhone|iPad|' +
@@ -19,7 +18,6 @@ class Layout extends React.Component {
     render() {
         return (
             <div className="layout">
-                <Banner mobile={this.state.mobile} />
                 <Selectors mobile={this.state.mobile} />
             </div>
         )

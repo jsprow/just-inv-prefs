@@ -1,7 +1,11 @@
 @font-face {
     font-family: Roboto;
     src: url("fonts/Roboto-Regular.ttf");
-    font-weight: 400
+    font-weight: 400;
+
+    font-family: Roboto-Mono;
+    src: url("fonts/RobotoMono-Regular.ttf");
+    font-weight: 400;
 }
 body {
     font-family: "Roboto", "Arial", sans-serif;
@@ -14,11 +18,32 @@ body {
     justify-content: center;
     align-items: center;
 }
+h1 {
+    text-align: center;
+}
 .select-style {
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-around;
     align-items: center;
+}
+.mobile-input {
+    font-family: "Roboto-Mono";
+    font-size: inherit;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px;
+    height: 32px;
+    margin: 12px;
+    padding: 0 5px;
+    outline: none;
+}
+.mobile-input:focus {
+    border: 1px solid transparent;
+    box-shadow: 0 0 8px darkgreen;
+}
+.mobile-input.invalid {
+    box-shadow: 0 0 8px maroon;
 }
 .select-box {
     color: transparent;
@@ -51,7 +76,8 @@ body {
 }
 .select-box.enabled:hover,
 .submit-button:hover {
-    box-shadow: 0 2px 8px lightblue;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 8px darkgreen;
     transform: translateY(1px);
     transition: all 250ms;
 }
@@ -124,7 +150,7 @@ body {
 .prefs-table th,
 .prefs-table td {
     text-align: left;
-    padding: 4px 24px 4px 12px;
+    padding: 8px 24px 8px 12px;
 }
 #prefs-body tr:nth-of-type(2n-1) {
     background-color: #eee;
@@ -137,5 +163,5 @@ body {
 .submit-button.mobile:focus {
     transform: translateY(0);
     box-shadow: none;
-    border: 1px solid lightblue;
+    border: 1px solid darkgreen;
 }

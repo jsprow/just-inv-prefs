@@ -4,9 +4,11 @@
   "private": false,
   "homepage": "http://just-inv.surge.sh/",
   "dependencies": {
+    "axios": "^0.16.1",
     "lodash": "^4.17.4",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "react-input-mask": "^0.8.0",
     "seedrandom": "^2.4.3",
     "socket.io": "^1.7.3"
   },

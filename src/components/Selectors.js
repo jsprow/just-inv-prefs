@@ -1,12 +1,7 @@
 import React from 'react'
 import carListBig from '../data/carList.json'
-import io from 'socket.io-client'
-
-var socket = io('http://localhost:3030')
-socket.on('ready', function (data) {
-    console.log(data)
-})
-// import seetdrandom from 'seedrandom'
+import sendPrefs from '../transmit.js'
+import InputElement from 'react-input-mask'
 
 const carList = carListBig.makes
 
@@ -22,26 +17,52 @@ var makes = [],
     modelSelected,
     modelsDisabled = 'disabled',
     yearsDisabled = 'disabled',
-    tableVisible = 'not-visible'
+    tableVisible = 'not-visible',
+    mobileNumber = '',
+    mobileChecked = false
 
-class Makes extends React.Component {
-    render() {
-    makes = ['Select Make']
-    for (var i = 0; i < carList.length; i++) {
-        var make = carList[i].name
+class MobileInput extends React.Component {
+    constructor(props) {
+        super(props)
+        this.getMobile = this.getMobile.bind(this)
+    }
+    getMobile(e) {
+        mobileNumber = e.target.value
 
-        if (makes.indexOf(make) === -1) {
-            makes.push(make)
+        let input = document.getElementById('mobileInput'),
+            _mobile = mobileNumber.replace(/[^0-9.]/g, '')
+
+        if (mobileChecked === true) {
+            if (_mobile.length === 10) {
+                input.classList.remove('invalid')
+            } else {
+                input.classList.add('invalid')
+                console.log('error')
+            }
         }
     }
-    const makesList = makes.map((make, index) => {
-        return <option key={'make_' + index}>{make}</option>
-    })
-    return (
-        <div className={'select-box enabled ' + this.props.mobile}>
-            <select id="makesList" onChange={getModels}>{makesList}</select>
-        </div>
-    )
+    render() {
+        return <InputElement onChange={this.getMobile} id="mobileInput" className="mobile-input" onBlur={this.getMobile} mask={"\\(999\\)999\\-9999"} maskChar={" "} alwaysShowMask={true} />
+    }
+}
+class Makes extends React.Component {
+    render() {
+        makes = ['Select Make']
+        for (var i = 0; i < carList.length; i++) {
+            var make = carList[i].name
+
+            if (makes.indexOf(make) === -1) {
+                makes.push(make)
+            }
+        }
+        const makesList = makes.map((make, index) => {
+            return <option key={'make_' + index}>{make}</option>
+        })
+        return (
+            <div className={'select-box enabled ' + this.props.mobile}>
+                <select id="makesList" onChange={getModels}>{makesList}</select>
+            </div>
+        )
     }
 }
 function getModels() {
@@ -120,7 +141,7 @@ class Pref extends React.Component {
         )
     }
 }
-function submitPrefs(event) {
+function submitPrefs() {
     if (pref.make.length === 0 && document.getElementById('makesList')) {
         var make = document.getElementById('makesList').value
         if (make !== 'Select Make') {
@@ -146,6 +167,8 @@ function submitPrefs(event) {
         )
     })
     pref = { 'make': '', 'model': '', 'year': '' }
+    modelsList = []
+    yearsList = []
 }
 class PrefsTable extends React.Component {
     render() {
@@ -191,33 +214,56 @@ class Selectors extends React.Component {
         })
     }
     submit() {
-        submitPrefs(event)
-        tableVisible = 'is-visible'
-        models = []
-        years = []
-        modelsDisabled = 'disabled'
-        yearsDisabled = 'disabled'
-        this.setState({
-            tableVisible: tableVisible,
-            prefs: prefsList,
-            models: modelsList,
-            years: yearsList,
-            modelsDisabled: modelsDisabled,
-            yearsDisabled: yearsDisabled
-        })
+        var thing = this
+        mobileChecked = true
+
+        let input = document.getElementById('mobileInput'),
+            _mobile = mobileNumber.replace(/[^0-9.]/g, '')
+
+        function submitter(thing) {
+            submitPrefs()
+            tableVisible = 'is-visible'
+            models = []
+            years = []
+            modelsDisabled = 'disabled'
+            yearsDisabled = 'disabled'
+            thing.setState({
+                tableVisible: tableVisible,
+                prefs: prefsList,
+                models: modelsList,
+                years: yearsList,
+                modelsDisabled: modelsDisabled,
+                yearsDisabled: yearsDisabled
+            })
+        }
+        if (_mobile.length === 10) {
+            input.classList.remove('invalid')
+            submitter(thing)
+        } else {
+            input.classList.add('invalid')
+            submitter(thing)
+            console.log('error')
+        }
     }
     send() {
+        let input = document.getElementById('mobileInput'),
+            _mobile = mobileNumber.replace(/[^0-9.]/g, '')
         var _prefs = []
-        if (prefsList) {
-            for (var i = 0; i < prefsList.length; i++) {
-                _prefs.push({
-                    "make": prefsList[i].props.make,
-                    "model": prefsList[i].props.model,
-                    "year": prefsList[i].props.year
-                })
+        if (_mobile.length === 10) {
+            if (prefsList) {
+                for (var i = 0; i < prefsList.length; i++) {
+                    _prefs.push({
+                        "mobile": _mobile,
+                        "make": prefsList[i].props.make,
+                        "model": prefsList[i].props.model,
+                        "year": prefsList[i].props.year
+                    })
+                }
             }
-            socket.emit('send-prefs', { _prefs })
-            console.log(_prefs)
+            sendPrefs(_prefs, _mobile)
+        } else {
+            input.classList.add('invalid')
+            console.log('error')
         }
     }
     render() {
@@ -225,6 +271,7 @@ class Selectors extends React.Component {
             <div className="container">
                 <form id="selectorBox" onChange={() => this.change()} >
                     <div className="select-style">
+                        <MobileInput />
                         <Makes mobile={this.props.mobile} value={this.state.makesValue} />
                         <Models mobile={this.props.mobile} disabled={this.state.modelsDisabled} models={this.state.models} />
                         <Years mobile={this.props.mobile} disabled={this.state.yearsDisabled} years={this.state.years} />
