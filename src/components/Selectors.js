@@ -21,7 +21,9 @@ var makes = [],
     mobileNumber = '',
     mobileChecked = false,
     isSent = 'Send',
-    isSentClass = ''
+    isSentClass = '',
+    isPicked = 'Pick',
+    isPickedClass = ''
 
 class MobileInput extends React.Component {
     constructor(props) {
@@ -205,13 +207,20 @@ class Selectors extends React.Component {
             tableVisible: tableVisible,
             prefs: prefs,
             isSent: isSent,
-            isSentClass: isSentClass
+            isSentClass: isSentClass,
+            isPicked: isPicked,
+            isPickedClass: isPickedClass
         }
         this.submit = this.submit.bind(this)
         this.send = this.send.bind(this)
     }
     change() {
+        isPicked = 'Pick'
+        isPickedClass = ''
         this.setState({
+            isPicked: isPicked,
+            isPickedClass: isPickedClass,
+            tableVisible: tableVisible,
             models: modelsList,
             years: yearsList,
             modelsDisabled: modelsDisabled,
@@ -221,6 +230,9 @@ class Selectors extends React.Component {
     submit() {
         var thing = this
         mobileChecked = true
+
+        isPicked = 'Picked'
+        isPickedClass = 'sent'
 
         let input = document.getElementById('mobileInput'),
             _mobile = mobileNumber.replace(/[^0-9.]/g, '')
@@ -237,6 +249,8 @@ class Selectors extends React.Component {
             thing.setState({
                 isSent: isSent,
                 isSentClass: isSentClass,
+                isPicked: isPicked,
+                isPickedClass: isPickedClass,
                 tableVisible: tableVisible,
                 prefs: prefsList,
                 models: modelsList,
@@ -290,7 +304,7 @@ class Selectors extends React.Component {
                         <Makes mobile={this.props.mobile} value={this.state.makesValue} />
                         <Models mobile={this.props.mobile} disabled={this.state.modelsDisabled} models={this.state.models} />
                         <Years mobile={this.props.mobile} disabled={this.state.yearsDisabled} years={this.state.years} />
-                        <button type="button" className={'submit-button ' + this.props.mobile} onClick={this.submit} >Pick</button>
+                        <button type="button" className={'submit-button ' + this.props.mobile + '' + this.state.isPickedClass} onClick={this.submit} >Pick</button>
                     </div >
                 </form >
                 <PrefsTable prefs={prefsList} visible={this.state.tableVisible} />

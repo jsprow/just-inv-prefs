@@ -69,10 +69,12 @@ h1 {
     background: hsla(0, 0%, 0%, 0.1);
     border: 1px solid hsla(0, 0%, 0%, 0.1);
     transition: all 250ms;
+    pointer-events: none;
 }
 .select-box.disabled::after {
     color: #999;
     transition: all 250ms;
+    pointer-events: none;
 }
 .select-box.enabled:hover,
 .submit-button:hover {
@@ -118,16 +120,6 @@ h1 {
     transform: translateY(0);
     box-shadow: 0 1px 4px #aaa;
 }
-.submit-button.sent,
-.submit-button.sent:hover,
-.submit-button.sent:active {
-    color: #fff;
-    background-color: darkgreen;
-    border: 1px solid transparent;
-    pointer-events: none;
-    transform: translateY(0);
-    box-shadow: none;
-}
 .container.not-visible {
     opacity: 0;
     transition: all 250ms;
@@ -172,6 +164,16 @@ h1 {
 .submit-button.mobile:active,
 .submit-button.mobile:focus {
     transform: translateY(0);
+    box-shadow: 0 0 6px darkgreen;
+    border: 1px solid transparent;
+}
+.submit-button.sent,
+.submit-button.sent:hover,
+.submit-button.sent:active {
+    color: #fff;
+    background-color: darkgreen;
+    border: 1px solid transparent;
+    pointer-events: none;
+    transform: translateY(0);
     box-shadow: none;
-    border: 1px solid darkgreen;
 }
