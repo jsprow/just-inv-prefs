@@ -1,7 +1,6 @@
 import React from 'react'
 import carListBig from '../data/carList.json'
 import sendPrefs from '../transmit.js'
-import InputElement from 'react-input-mask'
 
 const carList = carListBig.makes
 
@@ -18,37 +17,14 @@ var makes = [],
     modelsDisabled = 'disabled',
     yearsDisabled = 'disabled',
     tableVisible = 'not-visible',
-    mobileNumber = '',
-    mobileChecked = false,
     isSent = 'Send',
     isSentClass = '',
     isPicked = 'Pick',
-    isPickedClass = ''
+    isPickedClass = '',
+    mobileChecked,
+    mobileNumber
 
-class MobileInput extends React.Component {
-    constructor(props) {
-        super(props)
-        this.getMobile = this.getMobile.bind(this)
-    }
-    getMobile(e) {
-        mobileNumber = e.target.value
 
-        let input = document.getElementById('mobileInput'),
-            _mobile = mobileNumber.replace(/[^0-9.]/g, '')
-
-        if (mobileChecked === true) {
-            if (_mobile.length === 10) {
-                input.classList.remove('invalid')
-            } else {
-                input.classList.add('invalid')
-                console.log('error')
-            }
-        }
-    }
-    render() {
-        return <InputElement onChange={this.getMobile} id="mobileInput" className="mobile-input" onBlur={this.getMobile} mask={"\\(999\\)999\\-9999"} maskChar={" "} alwaysShowMask={true} />
-    }
-}
 class Makes extends React.Component {
     render() {
         makes = ['Select Make']
@@ -174,27 +150,7 @@ function submitPrefs() {
     modelsList = []
     yearsList = []
 }
-class PrefsTable extends React.Component {
-    render() {
-        return (
-            <div className={"container " + this.props.visible}>
-                <h1>Your Picks:</h1>
-                <table className="prefs-table">
-                    <thead className="prefs-head">
-                        <tr>
-                            <th>Make</th>
-                            <th>Model</th>
-                            <th>Year</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prefs-body">
-                        {this.props.prefs}
-                    </tbody>
-                </table>
-            </div>
-        )
-    }
-}
+
 class Selectors extends React.Component {
     constructor(props) {
         super(props)
@@ -205,14 +161,8 @@ class Selectors extends React.Component {
             modelsDisabled: modelsDisabled,
             yearsDisabled: yearsDisabled,
             tableVisible: tableVisible,
-            prefs: prefs,
-            isSent: isSent,
-            isSentClass: isSentClass,
-            isPicked: isPicked,
-            isPickedClass: isPickedClass
+            prefs: prefs
         }
-        this.submit = this.submit.bind(this)
-        this.send = this.send.bind(this)
     }
     change() {
         isPicked = 'Pick'
@@ -273,12 +223,6 @@ class Selectors extends React.Component {
             _mobile = mobileNumber.replace(/[^0-9.]/g, '')
         var _prefs = []
         if (_mobile.length === 10) {
-            isSent = 'Sent'
-            isSentClass = 'sent'
-            this.setState({
-                isSent: isSent,
-                isSentClass: isSentClass
-            })
             if (prefsList) {
                 for (var i = 0; i < prefsList.length; i++) {
                     _prefs.push({
@@ -300,17 +244,11 @@ class Selectors extends React.Component {
             <div className="container">
                 <form id="selectorBox" onChange={() => this.change()} >
                     <div className="select-style">
-                        <MobileInput />
                         <Makes mobile={this.props.mobile} value={this.state.makesValue} />
                         <Models mobile={this.props.mobile} disabled={this.state.modelsDisabled} models={this.state.models} />
                         <Years mobile={this.props.mobile} disabled={this.state.yearsDisabled} years={this.state.years} />
-                        <button type="button" className={'submit-button ' + this.props.mobile + '' + this.state.isPickedClass} onClick={this.submit} >Pick</button>
                     </div >
                 </form >
-                <PrefsTable prefs={prefsList} visible={this.state.tableVisible} />
-                <div className={'container ' + this.state.tableVisible}>
-                    <button className={'submit-button ' + this.props.mobile + ' ' + this.state.isSentClass} onClick={this.send}>{this.state.isSent.toString()}</button>
-                </div>
             </div >
         )
     }
